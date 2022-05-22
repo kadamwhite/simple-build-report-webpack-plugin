@@ -1,6 +1,6 @@
 /**
  * Adapted from source code copyright (c) 2015-present, Facebook, Inc,
- * and licensed under the MIT license.
+ * and licensed under the MIT license. Compare to original in vendor/.
  *
  * These ESLint rules acknowledge and maintain the style of the adopted code.
  */
@@ -46,6 +46,15 @@ function printFileSizesAfterBuild(
     .map( stats => stats
       .toJson( { all: true, assets: true } )
       .assets.filter( asset => canReadAsset( asset.name ) )
+      .filter( asset => {
+        // Filter out files which did not get emitted due to build errors.
+        try {
+          fs.accessSync( path.join( root, asset.name ) );
+          return true;
+        } catch ( e ) {
+          return false;
+        }
+      } )
       .map( asset => {
         let fileContents = fs.readFileSync( path.join( root, asset.name ) );
         let size = gzipSize( fileContents );
