@@ -12,6 +12,7 @@
 /* eslint-disable prefer-reflect */
 /* eslint-disable require-jsdoc */
 /* eslint-disable strict */
+/* eslint-disable object-property-newline */
 
 'use strict';
 
@@ -43,8 +44,7 @@ function printFileSizesAfterBuild(
   let { sizes } = previousSizeMap;
   let assets = ( webpackStats.stats || [ webpackStats ] )
     .map( stats => stats
-      .toJson( { all: false,
-        assets: true } )
+      .toJson( { all: true, assets: true } )
       .assets.filter( asset => canReadAsset( asset.name ) )
       .map( asset => {
         let fileContents = fs.readFileSync( path.join( root, asset.name ) );
