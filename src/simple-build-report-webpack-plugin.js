@@ -7,7 +7,7 @@ const {
 const msToS = require( './ms-to-s' );
 const logOnce = require( './log-once' );
 
-const pluginName = 'simple-build-report-webpack-plugin';
+const pluginName = require( '../package.json' ).name;
 
 // These sizes are pretty large. We'll warn for bundles exceeding them.
 const WARN_AFTER_BUNDLE_GZIP_SIZE = 512 * 1024;
