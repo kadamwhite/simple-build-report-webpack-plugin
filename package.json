@@ -1,7 +1,7 @@
 {
   "name": "simple-output-webpack-plugin",
   "version": "1.0.0",
-  "description": "Leverage Create React App output formatting in standalone webpack builds",
+  "description": "Webpack plugin to simplify Webpack console output using logic extracted from react-dev-utils.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prerefresh-vendor-files": "npm install react-dev-utils --no-save",
@@ -13,9 +13,9 @@
   "dependencies": {
     "chalk": "^4.1.2",
     "filesize": "^8.0.7",
-    "gzip-size": "^7.0.0",
+    "gzip-size": "^6.0.0",
     "recursive-readdir": "^2.2.2",
-    "strip-ansi": "^7.0.1"
+    "strip-ansi": "^6.0.1"
   },
   "devDependencies": {
     "eslint": "^8.16.0"
