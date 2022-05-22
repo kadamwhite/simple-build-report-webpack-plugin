@@ -1,0 +1,15 @@
+{
+  "name": "simple-output-webpack-plugin",
+  "version": "1.0.0",
+  "description": "Leverage Create React App output formatting in standalone webpack builds",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prerefresh-vendor-files": "npm update react-dev-utils --save",
+    "refresh-vendor-files": "cp node_modules/react-dev-utils/FileSizeReporter.js vendor/; cp node_modules/react-dev-utils/formatWebpackMessages.js vendor/"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "react-dev-utils": "^12.0.1"
+  }
+}
