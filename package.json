@@ -1,6 +1,6 @@
 {
   "name": "simple-build-report-webpack-plugin",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Webpack plugin to simplify Webpack console output using logic extracted from react-dev-utils.",
   "main": "index.js",
   "author": "K. Adam White",
