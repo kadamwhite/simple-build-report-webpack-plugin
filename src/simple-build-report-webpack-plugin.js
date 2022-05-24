@@ -1,5 +1,6 @@
 const chalk = require( 'chalk' );
 const formatWebpackMessages = require( '../vendor/formatWebpackMessages' );
+const { validate } = require( 'schema-utils' );
 const {
   measureFileSizesBeforeBuild,
   printFileSizesAfterBuild,
@@ -7,8 +8,6 @@ const {
 const getAssetsFromJsonStats = require( './get-assets-from-json-stats' );
 const msToS = require( './ms-to-s' );
 const logOnce = require( './log-once' );
-
-const pluginName = require( '../package.json' ).name;
 
 // These sizes are pretty large. We'll warn for bundles exceeding them.
 const WARN_AFTER_BUNDLE_GZIP_SIZE = 512 * 1024;
@@ -22,8 +21,45 @@ const buildResults = [];
  */
 class SimpleBuildReportPlugin {
 
-  // Define `apply` as its prototype method which is supplied with compiler as its argument
+  static defaultOptions = {
+    verboseFonts: false,
+    verboseImages: false,
+  };
+
+  // Schema for options object.
+  static schema = {
+    type: 'object',
+    properties: {
+      verboseFonts: {
+        type: 'boolean',
+      },
+      verboseImages: {
+        type: 'boolean',
+      },
+    },
+  };
+
+  /**
+   * Initialize the plugin.
+   *
+   * @param {Object}  [options]               Plugin configurations object.
+   * @param {boolean} [options.verboseFonts]  Whether to verbosely list emitted font files (default false).
+   * @param {boolean} [options.verboseImages] Whether to verbosely list emitted image files (default false).
+   */
+  constructor( options = {} ) {
+    validate(
+      SimpleBuildReportPlugin.schema,
+      options,
+      {
+        name: SimpleBuildReportPlugin.name,
+        baseDataPath: 'options',
+      }
+    );
+    this.options = { ...SimpleBuildReportPlugin.defaultOptions, options };
+  }
+
   apply( compiler ) {
+    const pluginName = SimpleBuildReportPlugin.name;
 
     logOnce( 'Creating an optimized production build...\n' );
 
