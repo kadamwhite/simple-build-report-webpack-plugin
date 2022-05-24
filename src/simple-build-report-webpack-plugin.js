@@ -4,6 +4,7 @@ const {
   measureFileSizesBeforeBuild,
   printFileSizesAfterBuild,
 } = require( './FileSizeReporter' );
+const getAssetsFromJsonStats = require( './get-assets-from-json-stats' );
 const msToS = require( './ms-to-s' );
 const logOnce = require( './log-once' );
 
@@ -44,14 +45,14 @@ class SimpleBuildReportPlugin {
     } );
 
     compiler.hooks.done.tap( pluginName, ( stats ) => {
-      console.log();
 
       const buildStats = stats.toJson( {
         all: true,
         warnings: true,
         errors: true,
       } );
-      const { assets, time } = buildStats;
+      const { time } = buildStats;
+      const assets = getAssetsFromJsonStats( buildStats );
 
       const messages = formatWebpackMessages( buildStats );
 

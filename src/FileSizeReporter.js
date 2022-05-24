@@ -24,6 +24,8 @@ let recursive = require( 'recursive-readdir' );
 let stripAnsi = require( 'strip-ansi' );
 let gzipSize = require( 'gzip-size' ).sync;
 
+const getAssetsFromJsonStats = require( './get-assets-from-json-stats' );
+
 function canReadAsset( asset ) {
   return (
     ( /\.(js|css)$/ ).test( asset ) &&
@@ -43,9 +45,9 @@ function printFileSizesAfterBuild(
   let { root } = previousSizeMap;
   let { sizes } = previousSizeMap;
   let assets = ( webpackStats.stats || [ webpackStats ] )
-    .map( stats => stats
-      .toJson( { all: true, assets: true } )
-      .assets.filter( asset => canReadAsset( asset.name ) )
+    // Log all assets, including nested chunks or oversize assets.
+    .map( stats => getAssetsFromJsonStats( stats.toJson( { all: true, assets: true } ) )
+      .filter( asset => canReadAsset( asset.name ) )
       .filter( asset => {
         // Filter out files which did not get emitted due to build errors.
         try {
