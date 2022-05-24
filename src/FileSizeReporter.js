@@ -62,12 +62,16 @@ function printFileSizesAfterBuild(
         let size = gzipSize( fileContents );
         let previousSize = sizes[ removeFileNameHash( root, asset.name ) ];
         let difference = getDifferenceLabel( size, previousSize );
+        const isMainBundle = Boolean( asset.chunkNames && asset.chunkNames.length && asset.name.indexOf( `${ asset.chunkNames[0] }.` ) === 0 );
+        const isChunk = Boolean( ! isMainBundle && asset.chunkIdHints && asset.chunkIdHints.length );
         return {
           folder: path.join(
             path.basename( buildFolder ),
             path.dirname( asset.name )
           ),
           name: path.basename( asset.name ),
+          isMainBundle,
+          isChunk,
           size,
           sizeLabel:
               filesize( size ) + ( difference ? ` (${ difference })` : '' ),
@@ -87,8 +91,7 @@ function printFileSizesAfterBuild(
       let rightPadding = ' '.repeat( longestSizeLabelLength - sizeLength );
       sizeLabel += rightPadding;
     }
-    let isMainBundle = asset.name.indexOf( 'main.' ) === 0;
-    let maxRecommendedSize = isMainBundle ?
+    let maxRecommendedSize = asset.isMainBundle ?
       maxBundleGzipSize :
       maxChunkGzipSize;
     let isLarge = maxRecommendedSize && asset.size > maxRecommendedSize;
@@ -96,7 +99,7 @@ function printFileSizesAfterBuild(
       suggestBundleSplitting = true;
     }
     console.log( `  ${
-      isLarge ? chalk.yellow( sizeLabel ) : sizeLabel
+      isLarge ? chalk.yellow( sizeLabel ) : ( asset.isChunk ? chalk.dim( sizeLabel ) : sizeLabel )
     }  ${
       chalk.dim( asset.folder + path.sep )
     }${ chalk.cyan( asset.name ) }` );
