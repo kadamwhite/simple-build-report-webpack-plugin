@@ -1,6 +1,7 @@
 const chalk = require( 'chalk' );
 const formatWebpackMessages = require( '../vendor/formatWebpackMessages' );
 const { validate } = require( 'schema-utils' );
+
 const {
   measureFileSizesBeforeBuild,
   printFileSizesAfterBuild,
@@ -136,11 +137,37 @@ class SimpleBuildReportPlugin {
         WARN_AFTER_CHUNK_GZIP_SIZE
       );
 
+      const fontFilePattern = /\.(eot|ttf|woff|woff2)$/i;
+      const imageFilePattern = /\.(png|jpg|jpeg|gif|svg|avif|webp)$/i;
+
+      const filtered = { images: [], fonts: [] };
       assets
         .filter( asset => ! ( /\.(js|css)$/ ).test( asset.name ) )
+        .filter( asset => {
+          if ( ! this.options.verboseFonts && fontFilePattern.test( asset.name ) ) {
+            filtered.fonts.push( asset.name );
+            return false;
+          }
+          return true;
+        } )
+        .filter( asset => {
+          if ( ! this.options.verboseImages && imageFilePattern.test( asset.name ) ) {
+            filtered.images.push( asset.name );
+            return false;
+          }
+          return true;
+        } )
         .forEach( asset => {
           console.log( `  ${ chalk.dim( asset.name ) }` );
         } );
+
+      if ( filtered.fonts.length ) {
+        console.log( chalk.dim( `  ${ filtered.fonts.length } font file${ filtered.fonts.length > 1 ? 's' : '' }` ) );
+      }
+
+      if ( filtered.images.length ) {
+        console.log( chalk.dim( `  ${ filtered.images.length } image file${ filtered.images.length > 1 ? 's' : '' }` ) );
+      }
 
       if ( messages.warnings.length ) {
         console.log();
